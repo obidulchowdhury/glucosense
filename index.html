@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GlucoSense – Diabetes Risk Prediction</title>
+<script>try{var th=localStorage.getItem('gs-theme');if(!th)th=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=th}catch(e){document.documentElement.dataset.theme='light'}</script>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🩸</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Hind+Siliguri:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light;--bd2:#B7C6BF;--field:#fff;--ph:#9DB0AA;--dot:rgba(20,49,47,.09);--hov:#E3EEE9;--hovb:#9DB6AD;--act:#D3E4DD;--track:#E3EAE6;--mid:#9DB0AA;--hair:#D3DCD6;--mbody:#F5F7F2;--mbd:#C4CFC7;--mhi:#fff;--msh:rgba(20,49,47,.5);--wbg:#FFF4DC;--wtx:#5B3B00;--onink:#fff;--teal-h:#095A4F;--paper:#E9EFEA;--card:#FCFDFB;--ink:#14312F;--mut:#5B716E;--line:#CAD6D0;--teal:#0B6B5E;--ok:#1E8E5A;--warn:#B96B00;--bad:#C63A3A;--lcd:#BCCBA0;--lcdink:#1E2B1C}
+:root[data-theme=dark]{color-scheme:dark;--paper:#0E1A19;--card:#152422;--ink:#E4EFEB;--mut:#8FA8A2;--line:#2A3C39;--teal:#14907E;--teal-h:#0F7A69;--ok:#4CD08E;--warn:#F0A63A;--bad:#FF7A7A;--bd2:#3C5450;--field:#0F1D1B;--ph:#5E7771;--dot:rgba(255,255,255,.05);--hov:#1F3431;--hovb:#4A6A64;--act:#27423E;--track:#233633;--mid:#5E7771;--hair:#2A3C39;--mbody:#26302E;--mbd:#3A4743;--mhi:rgba(255,255,255,.07);--msh:rgba(0,0,0,.75);--wbg:#33290F;--wtx:#F1D9A0;--onink:#0E1A19}
+*{box-sizing:border-box;margin:0}
+body{font-family:'Hind Siliguri','Bricolage Grotesque',system-ui,sans-serif;color:var(--ink);line-height:1.55;min-height:100vh;background-color:var(--paper);background-image:radial-gradient(var(--dot) 1px,transparent 1px);background-size:22px 22px}
+.wrap{max-width:1040px;margin:auto;padding:22px 20px 56px}
+.ic{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:34px}
+.brand{display:flex;align-items:center;gap:8px;font-family:'Bricolage Grotesque','Hind Siliguri',sans-serif;font-weight:700;font-size:21px}
+.brand .ic{width:22px;height:22px;color:var(--teal)}
+.right{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.tag{color:var(--mut);font-size:14px}
+.theme{width:38px;height:38px;border-radius:50%;border:1.5px solid var(--line);background:var(--card);color:var(--ink);display:grid;place-items:center;padding:0}
+.theme:hover{background:var(--hov);border-color:var(--hovb)}
+.theme .ic{width:19px;height:19px}.theme .sun{display:none}
+:root[data-theme=dark] .theme .sun{display:block}:root[data-theme=dark] .theme .moon{display:none}
+.lang{display:flex;padding:3px;border:1.5px solid var(--line);border-radius:99px;background:var(--card)}
+.lang button{border:0;background:transparent;color:var(--mut);padding:5px 14px;border-radius:99px;font-size:14px;font-weight:600}
+.lang button.on{background:var(--ink);color:var(--onink)}
+h1{font-family:'Bricolage Grotesque','Hind Siliguri',sans-serif;font-size:clamp(32px,5.2vw,52px);line-height:1.1;letter-spacing:-1.2px;max-width:660px;font-weight:700}
+.lead{color:var(--mut);margin:12px 0 30px;font-size:18px;max-width:560px}
+.grid{display:grid;grid-template-columns:1.12fr .88fr;gap:28px;align-items:start}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px}
+h2{font-family:'Bricolage Grotesque','Hind Siliguri',sans-serif;font-size:22px;font-weight:700}
+.sub{color:var(--mut);font-size:14.5px;margin:2px 0 18px}
+.grp{font-weight:600;font-size:15px;margin:24px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.grp.first{margin-top:0}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:16px 14px}
+@media(max-width:480px){.fields{grid-template-columns:1fr}}
+label,.lab{display:flex;align-items:center;gap:7px;font-size:14.5px;font-weight:500;margin-bottom:6px}
+label .ic,.lab .ic{color:var(--mut)}
+label small{color:var(--mut);font-weight:400;font-size:13px}
+.in{position:relative}
+.in input{width:100%;padding:12px 82px 12px 14px;border-radius:10px;border:1.5px solid var(--bd2);background:var(--field);color:var(--ink);font:inherit;font-size:18px;outline:none;transition:border-color .15s;-moz-appearance:textfield;appearance:textfield}
+.in input::-webkit-outer-spin-button,.in input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.in input::placeholder{color:var(--ph)}
+input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(11,107,94,.16)}
+input.bad{border-color:var(--bad)}
+.st{position:absolute;right:7px;top:50%;transform:translateY(-50%);display:flex;gap:5px}
+.st button{width:32px;height:32px;border-radius:8px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font-size:19px;line-height:1;padding:0;display:grid;place-items:center}
+.st button:hover{background:var(--hov);border-color:var(--hovb)}
+.st button:active{background:var(--act)}
+.seg{display:flex;gap:8px}
+.seg input{position:absolute;opacity:0}
+.seg label{flex:1;margin:0;justify-content:center;padding:11px 6px;border-radius:10px;border:1.5px solid var(--bd2);background:var(--field);cursor:pointer;font-size:16px;font-weight:500}
+.seg label .ic{color:inherit}
+.seg input:checked+label{background:var(--teal);border-color:var(--teal);color:#fff}
+.seg input:focus-visible+label{box-shadow:0 0 0 3px rgba(11,107,94,.25)}
+.full{grid-column:1/-1}
+.units{display:flex;gap:6px;float:right}
+.units button{font-size:12.5px;padding:3px 11px;border-radius:99px;background:transparent;border:1.5px solid var(--line);color:var(--mut);font-weight:600}
+.units button.on{background:var(--ink);border-color:var(--ink);color:var(--onink)}
+.chip{font-size:14px;color:var(--mut)}
+.sw{margin:0;padding:12px 14px;border-radius:10px;border:1.5px solid var(--bd2);background:var(--field);cursor:pointer;gap:12px;font-size:15.5px}
+.sw input{width:20px;height:20px;accent-color:var(--teal)}
+.sw .ic{color:var(--bad);width:21px;height:21px}
+.sw small{display:block;color:var(--mut);font-size:12.5px}
+.err{color:var(--bad);font-size:14px;min-height:20px;margin-top:14px}
+.btns{display:flex;gap:10px;margin-top:6px;flex-wrap:wrap}
+button{font:inherit;cursor:pointer}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;border-radius:12px;padding:14px 22px;font-weight:600;font-size:16.5px;border:1.5px solid transparent}
+.go{flex:1;min-width:180px;background:var(--teal);color:#fff}
+.go:hover{background:var(--teal-h)}
+.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.ghost:hover{background:var(--hov);border-color:var(--hovb)}
+button:focus-visible,summary:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
+.side{position:sticky;top:16px}
+.side h2{margin-bottom:12px}
+.meter{background:var(--mbody);border:1.5px solid var(--mbd);border-radius:30px;padding:16px 16px 22px;box-shadow:0 1px 0 var(--mhi) inset,0 24px 34px -20px var(--msh)}
+.mt{display:flex;justify-content:space-between;align-items:center;padding:0 6px 11px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13px;color:var(--mut)}
+#led{width:11px;height:11px;border-radius:50%;background:#B8C2BC;box-shadow:inset 0 0 0 1.5px rgba(0,0,0,.15);transition:background .4s}
+.lcd{background:var(--lcd);border-radius:14px;padding:13px 16px 11px;color:var(--lcdink);font-family:'Share Tech Mono','Hind Siliguri',monospace;box-shadow:inset 0 3px 9px rgba(30,43,28,.38),inset 0 0 0 2px #9FAE85}
+.lr{display:flex;justify-content:space-between;font-size:13px;letter-spacing:1px;text-transform:uppercase}
+.ln{font-size:80px;line-height:1.05;display:flex;justify-content:flex-end;align-items:baseline;gap:4px;margin:2px 0 8px}
+@media(max-width:480px){.ln{font-size:64px}}
+.ln small{font-size:26px}
+.segs{display:grid;grid-template-columns:repeat(25,1fr);gap:3px;height:20px}
+.segs i{background:rgba(30,43,28,.13);border-radius:2px}
+.segs i.on{background:var(--lcdink)}
+.sc{display:flex;justify-content:space-between;font-size:11px;margin-top:4px;opacity:.7}
+.empty{color:var(--mut);font-size:15px;padding:18px 6px 0}
+.vd{display:flex;gap:12px;align-items:flex-start;padding:18px 6px 0}
+.vd .ic{width:28px;height:28px;margin-top:2px}
+.vd h3{font-family:'Bricolage Grotesque','Hind Siliguri',sans-serif;font-size:24px;line-height:1.2}
+.vd .st2{font-weight:600;font-size:14.5px}
+.vd p{color:var(--mut);font-size:14.5px;margin-top:3px}
+.why{display:none;margin:18px 6px 0;padding-top:14px;border-top:1px solid var(--hair)}
+.why h4{font-size:15px;margin-bottom:10px}
+.why li{list-style:none;display:flex;gap:12px;padding:9px 0;font-size:14.5px;border-bottom:1px dashed var(--hair)}
+.why li:last-child{border:0}
+.why b{display:block;font-weight:600}
+.why span{color:var(--mut)}
+.dir{width:0;height:0;margin-top:7px;flex:none;border-left:6px solid transparent;border-right:6px solid transparent}
+.dir.up{border-bottom:10px solid var(--bad)}.dir.dn{border-top:10px solid var(--ok)}
+.more{margin-top:28px}
+details{border:1px solid var(--line);border-radius:12px;margin-top:10px;background:var(--card)}
+summary{padding:15px 20px;cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px}
+summary span{display:flex;align-items:center;gap:10px}
+summary span .ic{color:var(--mut)}
+summary::after{content:'+';font-size:22px;line-height:1;color:var(--teal)}details[open] summary::after{content:'−'}
+.body{padding:0 20px 20px}
+.bar{display:grid;grid-template-columns:130px 1fr 48px;gap:10px;align-items:center;margin:9px 0;font-size:14px}
+@media(max-width:480px){.bar{grid-template-columns:100px 1fr 44px}}
+.tr{height:12px;border-radius:3px;background:var(--track);position:relative;overflow:hidden}
+.fl{height:100%}
+.dv .tr{background:linear-gradient(90deg,transparent 49.6%,var(--mid) 49.6% 50.4%,transparent 50.4%),var(--track)}
+.dv .fl{position:absolute;top:0}
+.note{color:var(--mut);font-size:13.5px;margin-top:10px}
+.warn{display:flex;gap:12px;margin-top:24px;padding:14px 18px;border-radius:10px;background:var(--wbg);border-left:4px solid var(--warn);color:var(--wtx);font-size:14px}
+.warn .ic{color:var(--warn);width:21px;height:21px;margin-top:2px}
+footer{color:var(--mut);font-size:13px;margin-top:28px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="i-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol><symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol><symbol id="i-female" viewBox="0 0 24 24"><path d="M12 15v7"/><path d="M9 19h6"/><circle cx="12" cy="9" r="6"/></symbol><symbol id="i-male" viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="m21 3-6.75 6.75"/><circle cx="10" cy="14" r="6"/></symbol><symbol id="i-height" viewBox="0 0 24 24"><polyline points="8 18 12 22 16 18"/><polyline points="8 6 12 2 16 6"/><line x1="12" x2="12" y1="2" y2="22"/></symbol><symbol id="i-weight" viewBox="0 0 24 24"><circle cx="12" cy="5" r="3"/><path d="M6.5 8a2 2 0 0 0-1.905 1.46L2.1 18.5A2 2 0 0 0 4 21h16a2 2 0 0 0 1.925-2.54L19.4 9.5A2 2 0 0 0 17.48 8Z"/></symbol><symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></symbol><symbol id="i-heart" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></symbol><symbol id="i-pulse" viewBox="0 0 24 24"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/></symbol><symbol id="i-gauge" viewBox="0 0 24 24"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></symbol><symbol id="i-spark" viewBox="0 0 24 24"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></symbol><symbol id="i-flask" viewBox="0 0 24 24"><path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"/><path d="M6.453 15h11.094"/><path d="M8.5 2h7"/></symbol><symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol><symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></symbol><symbol id="i-star" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></symbol><symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol><symbol id="i-warn" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol><symbol id="i-ok" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></symbol><symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></symbol><symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></symbol><symbol id="i-clip" viewBox="0 0 24 24"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></symbol><symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol><symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></symbol><symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol></defs></svg>
+<div class="wrap">
+<header class="top">
+ <div class="brand"><svg class="ic" aria-hidden="true"><use href="#i-drop"/></svg>GlucoSense</div>
+ <div class="right"><span class="tag" data-i="tag"></span><button type="button" class="theme" id="theme"><svg class="ic moon" aria-hidden="true"><use href="#i-moon"/></svg><svg class="ic sun" aria-hidden="true"><use href="#i-sun"/></svg></button>
+  <div class="lang" role="group" aria-label="Language"><button type="button" data-l="en" class="on">English</button><button type="button" data-l="bn">বাংলা</button></div></div>
+</header>
+<h1 data-i="h1"></h1>
+<p class="lead" data-i="lead"></p>
+
+<div class="grid">
+<form class="card" id="form" novalidate>
+<h2 data-i="formTitle"></h2>
+<p class="sub" data-i="formSub"></p>
+<div class="grp first" data-i="grpA"></div>
+<div class="fields"><div><label for="age"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg><span data-i="age"></span><small data-i="u_yrs"></small></label><div class="in"><input id="age" type="number" min="0" inputmode="numeric" placeholder="45" data-step="1" data-def="40" data-min="1" data-max="110"><div class="st"><button type="button" data-d="-1">−</button><button type="button" data-d="1">+</button></div></div></div><div><span class="lab"><svg class="ic" aria-hidden="true"><use href="#i-users"/></svg><span data-i="gender"></span></span><div class="seg"><input type="radio" name="g" id="gf" value="0"><label for="gf"><svg class="ic" aria-hidden="true"><use href="#i-female"/></svg><span data-i="female"></span></label><input type="radio" name="g" id="gm" value="1"><label for="gm"><svg class="ic" aria-hidden="true"><use href="#i-male"/></svg><span data-i="male"></span></label></div></div><div><label for="height"><svg class="ic" aria-hidden="true"><use href="#i-height"/></svg><span data-i="height"></span><small data-i="u_cm"></small></label><div class="in"><input id="height" type="number" min="0" inputmode="decimal" placeholder="160" data-step="1" data-def="160" data-min="100" data-max="220"><div class="st"><button type="button" data-d="-1">−</button><button type="button" data-d="1">+</button></div></div></div><div><label for="weight"><svg class="ic" aria-hidden="true"><use href="#i-weight"/></svg><span data-i="weight"></span><small data-i="u_kg"></small></label><div class="in"><input id="weight" type="number" min="0" inputmode="decimal" placeholder="62" data-step="0.5" data-def="60" data-min="20" data-max="250"><div class="st"><button type="button" data-d="-1">−</button><button type="button" data-d="1">+</button></div></div></div><div class="full chip" id="bmi"></div></div>
+<div class="grp" data-i="grpB"></div>
+<div class="fields"><div class="full"><div class="units"><button type="button" data-u="mmol" class="on">mmol/L</button><button type="button" data-u="mg">mg/dL</button></div><label for="glucose"><svg class="ic" aria-hidden="true"><use href="#i-drop"/></svg><span data-i="glucose"></span></label><div class="in"><input id="glucose" type="number" min="0" step="any" inputmode="decimal" placeholder="7.5" data-step="0.1" data-def="7.5" data-min="1" data-max="40"><div class="st"><button type="button" data-d="-1">−</button><button type="button" data-d="1">+</button></div></div></div><div><label for="sys"><svg class="ic" aria-hidden="true"><use href="#i-gauge"/></svg><span data-i="sys"></span><small>mmHg</small></label><div class="in"><input id="sys" type="number" min="0" inputmode="numeric" placeholder="120" data-step="1" data-def="120" data-min="60" data-max="260"><div class="st"><button type="button" data-d="-1">−</button><button type="button" data-d="1">+</button></div></div></div><div><label for="dia"><svg class="ic" aria-hidden="true"><use href="#i-gauge"/></svg><span data-i="dia"></span><small>mmHg</small></label><div class="in"><input id="dia" type="number" min="0" inputmode="numeric" placeholder="80" data-step="1" data-def="80" data-min="30" data-max="160"><div class="st"><button type="button" data-d="-1">−</button><button type="button" data-d="1">+</button></div></div></div><div class="full"><label for="pulse"><svg class="ic" aria-hidden="true"><use href="#i-pulse"/></svg><span data-i="pulse"></span><small data-i="u_bpm"></small></label><div class="in"><input id="pulse" type="number" min="0" inputmode="numeric" placeholder="75" data-step="1" data-def="75" data-min="30" data-max="220"><div class="st"><button type="button" data-d="-1">−</button><button type="button" data-d="1">+</button></div></div></div><div class="full"><label class="sw" for="hyp"><input type="checkbox" id="hyp"><svg class="ic" aria-hidden="true"><use href="#i-heart"/></svg><span><span data-i="hyp"></span><small data-i="hypS"></small></span></label></div></div>
+<div class="err" id="err" role="alert"></div>
+<div class="btns"><button type="submit" class="btn go"><svg class="ic" aria-hidden="true"><use href="#i-pulse"/></svg><span data-i="predict"></span></button><button type="button" class="btn ghost" id="demo"><svg class="ic" aria-hidden="true"><use href="#i-flask"/></svg><span data-i="sample"></span></button><button type="reset" class="btn ghost" id="reset"><svg class="ic" aria-hidden="true"><use href="#i-reset"/></svg><span data-i="clear"></span></button></div>
+</form>
+
+<aside class="side">
+<h2 data-i="resTitle"></h2>
+<div class="meter">
+ <div class="mt"><span>GlucoSense</span><i id="led"></i></div>
+ <div class="lcd" role="img" aria-live="polite">
+  <div class="lr"><span data-i="lcd"></span><span id="lcdMsg"></span></div>
+  <div class="ln"><span id="pct">--</span><small>%</small></div>
+  <div class="segs" id="segs"></div>
+  <div class="sc"><span>0</span><span>50</span><span>100</span></div>
+ </div>
+ <div id="verdict" aria-live="polite"></div>
+ <div class="why" id="why"><h4 data-i="whyT"></h4><ul id="rl" style="padding:0"></ul></div>
+</div>
+</aside>
+</div>
+
+<div class="more">
+<details><summary><span><svg class="ic" aria-hidden="true"><use href="#i-chart"/></svg><span data-i="s1"></span></span></summary><div class="body"><div id="contrib" class="dv"></div><p class="note" data-i="n1b"></p></div></details>
+<details><summary><span><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg><span data-i="s2"></span></span></summary><div class="body"><div id="imp"></div><p class="note" data-i="n2"></p></div></details>
+<details><summary><span><svg class="ic" aria-hidden="true"><use href="#i-target"/></svg><span data-i="s3"></span></span></summary><div class="body"><div id="acc"></div><p class="note" data-i="n3"></p></div></details>
+</div>
+<div class="warn"><svg class="ic" aria-hidden="true"><use href="#i-warn"/></svg><div data-h="warn"></div></div>
+<footer data-i="foot"></footer>
+</div>
+<script>
+const $=id=>document.getElementById(id), num=id=>{const v=$(id).value;return v===''?NaN:parseFloat(v)};
+const T={
+en:{title:'GlucoSense – Diabetes Risk Prediction',tag:'A CSE thesis project, City University',
+ h1:'Check your diabetes risk in one minute',
+ lead:'Fill in your readings and press the button. You get a result, the reasons, and graphs if you want them.',
+ formTitle:'Your readings',formSub:'All fields are needed for the prediction.',grpA:'About you',grpB:'Blood sugar & heart',
+ age:'Age',u_yrs:'years',gender:'Gender',female:'Female',male:'Male',height:'Height',u_cm:'cm',weight:'Weight',u_kg:'kg',
+ glucose:'Blood glucose',sys:'Blood pressure (top number)',dia:'Blood pressure (bottom number)',pulse:'Pulse',u_bpm:'bpm',
+ hyp:'I have high blood pressure',hypS:'Turns on by itself if BP is 140/90 or more',
+ predict:'Predict my risk',sample:'Try sample',clear:'Clear',resTitle:'Result',resSub:'Estimated chance of diabetes',
+ empty:'Your result will appear here.',lcd:'RISK',ready:'READY',themeD:'Switch to dark mode',themeL:'Switch to light mode',whyT:'Why you got this result',
+ s1:'Graph: how each reading affected your score',s2:'What matters most in our study',s3:'How accurate were the models?',
+ n1:'Press "Predict my risk" first to see this graph.',n1b:'Right (red) pushes risk up. Left (green) pushes it down.',
+ n2:'Average importance across 4 models. It shows what the models used, not what causes diabetes.',
+ n3:'Accuracy on 328 test records. Random Forest scored best (93.9%, ROC-AUC 0.97).',
+ warn:'<b>Not medical advice.</b> This is an educational demo. Its score comes from a simple estimator that follows our dataset\'s trends, not from the full trained model. Please see a doctor for a real blood test.',
+ foot:'Diabetes Prediction Using Machine Learning Models: A Data-Driven Approach',
+ bmiAuto:'Your BMI is calculated automatically',bmiIs:'Your BMI: ',bmiC:['Underweight','Healthy range','Overweight','Obese range'],
+ e1:'Please check the red boxes. The top BP number must be higher than the bottom one.',e2:'Please choose your gender.',
+ yes:'Likely diabetic',no:'Likely not diabetic',lv:['Low risk','Moderate risk','High risk'],
+ msg:['Your readings look like those of people without diabetes.','Mixed signals. A simple blood sugar test would give a clearer answer.','Your readings look like those of people with diabetes. Please see a doctor for a proper test.'],
+ dec:'Decrease',inc:'Increase',
+ f:{glucose:'Glucose',hyp:'High BP',age:'Age',bmi:'BMI',dia:'BP bottom',sys:'BP top',pulse:'Pulse',gender:'Gender',weight:'Weight',height:'Height'},
+ r:{glucose:(x,u)=>`Your glucose (${x.val.toFixed(1)} mmol/L) is ${u?'higher':'lower'} than typical. It is the biggest factor in our study.`,
+  hyp:x=>x.val?'High blood pressure often goes together with diabetes in our data.':'No high blood pressure helps keep your score down.',
+  age:(x,u)=>`Being ${x.val} ${u?'slightly raises':'slightly lowers'} the estimate.`,
+  bmi:(x,u)=>`Your BMI (${x.val.toFixed(1)}) ${u?'adds a little to':'helps lower'} the estimate.`,
+  bp:(x,u)=>`Your blood pressure ${u?'adds to':'helps lower'} the estimate.`,
+  pulse:(x,u)=>`Your pulse (${x.val} bpm) has a small ${u?'raising':'lowering'} effect.`,
+  gender:()=>'Gender has a very small effect.'}},
+bn:{title:'গ্লুকোসেন্স – ডায়াবেটিস ঝুঁকি পূর্বাভাস',tag:'সিএসই থিসিস প্রজেক্ট, সিটি ইউনিভার্সিটি',
+ h1:'এক মিনিটে জেনে নিন আপনার ডায়াবেটিস ঝুঁকি',
+ lead:'আপনার স্বাস্থ্য তথ্য দিয়ে বাটনে চাপ দিন। ফলাফল, কারণ এবং চাইলে গ্রাফও দেখতে পাবেন।',
+ formTitle:'আপনার তথ্য',formSub:'পূর্বাভাসের জন্য সব ঘর পূরণ করতে হবে।',grpA:'আপনার সম্পর্কে',grpB:'রক্তে চিনি ও হৃদ্‌যন্ত্র',
+ age:'বয়স',u_yrs:'বছর',gender:'লিঙ্গ',female:'মহিলা',male:'পুরুষ',height:'উচ্চতা',u_cm:'সেমি',weight:'ওজন',u_kg:'কেজি',
+ glucose:'রক্তে গ্লুকোজ',sys:'রক্তচাপ (উপরের সংখ্যা)',dia:'রক্তচাপ (নিচের সংখ্যা)',pulse:'নাড়ির গতি (পালস)',u_bpm:'বিপিএম',
+ hyp:'আমার উচ্চ রক্তচাপ আছে',hypS:'রক্তচাপ ১৪০/৯০ বা তার বেশি হলে নিজে থেকেই চালু হবে',
+ predict:'ঝুঁকি দেখুন',sample:'নমুনা তথ্য',clear:'মুছুন',resTitle:'ফলাফল',resSub:'ডায়াবেটিস হওয়ার সম্ভাব্য সম্ভাবনা',
+ empty:'আপনার ফলাফল এখানে দেখা যাবে।',lcd:'ঝুঁকি',ready:'প্রস্তুত',themeD:'ডার্ক মোড চালু করুন',themeL:'লাইট মোড চালু করুন',whyT:'এই ফলাফল কেন এলো',
+ s1:'গ্রাফ: প্রতিটি তথ্য আপনার স্কোরে কী প্রভাব ফেলেছে',s2:'আমাদের গবেষণায় কোন বিষয় সবচেয়ে গুরুত্বপূর্ণ',s3:'মডেলগুলো কতটা নির্ভুল ছিল?',
+ n1:'গ্রাফ দেখতে আগে "ঝুঁকি দেখুন" চাপুন।',n1b:'ডানে (লাল) ঝুঁকি বাড়ায়। বামে (সবুজ) ঝুঁকি কমায়।',
+ n2:'৪টি মডেলের গড় গুরুত্ব। এটি দেখায় মডেল কী ব্যবহার করেছে, ডায়াবেটিসের কারণ নয়।',
+ n3:'৩২৮টি পরীক্ষার রেকর্ডে নির্ভুলতা। র‍্যান্ডম ফরেস্ট সবচেয়ে ভালো করেছে (৯৩.৯%, ROC-AUC ০.৯৭)।',
+ warn:'<b>এটি চিকিৎসা পরামর্শ নয়।</b> এটি শুধু শিক্ষামূলক ডেমো। এর স্কোর আমাদের ডেটার প্রবণতা অনুসরণ করা একটি সহজ হিসাব থেকে আসে, পুরো প্রশিক্ষিত মডেল থেকে নয়। সঠিক রক্ত পরীক্ষার জন্য অনুগ্রহ করে ডাক্তারের কাছে যান।',
+ foot:'মেশিন লার্নিং মডেল ব্যবহার করে ডায়াবেটিস পূর্বাভাস: একটি ডেটা-ভিত্তিক পদ্ধতি',
+ bmiAuto:'আপনার বিএমআই নিজে থেকেই হিসাব হবে',bmiIs:'আপনার বিএমআই: ',bmiC:['কম ওজন','স্বাভাবিক','বেশি ওজন','স্থূলতার পর্যায়'],
+ e1:'লাল ঘরগুলো দেখুন। উপরের রক্তচাপ নিচেরটির চেয়ে বেশি হতে হবে।',e2:'অনুগ্রহ করে লিঙ্গ বেছে নিন।',
+ yes:'সম্ভবত ডায়াবেটিস আছে',no:'সম্ভবত ডায়াবেটিস নেই',lv:['কম ঝুঁকি','মাঝারি ঝুঁকি','বেশি ঝুঁকি'],
+ msg:['আপনার তথ্য ডায়াবেটিসবিহীন মানুষের মতো দেখাচ্ছে।','মিশ্র লক্ষণ। একটি সাধারণ রক্তে চিনির পরীক্ষা পরিষ্কার উত্তর দেবে।','আপনার তথ্য ডায়াবেটিস আছে এমন মানুষের মতো দেখাচ্ছে। সঠিক পরীক্ষার জন্য ডাক্তারের কাছে যান।'],
+ dec:'কমান',inc:'বাড়ান',
+ f:{glucose:'গ্লুকোজ',hyp:'উচ্চ রক্তচাপ',age:'বয়স',bmi:'বিএমআই',dia:'রক্তচাপ (নিচ)',sys:'রক্তচাপ (উপর)',pulse:'নাড়ির গতি',gender:'লিঙ্গ',weight:'ওজন',height:'উচ্চতা'},
+ r:{glucose:(x,u)=>`আপনার গ্লুকোজ (${x.val.toFixed(1)} mmol/L) সাধারণের চেয়ে ${u?'বেশি':'কম'}। আমাদের গবেষণায় এটিই সবচেয়ে বড় কারণ।`,
+  hyp:x=>x.val?'আমাদের ডেটায় উচ্চ রক্তচাপ প্রায়ই ডায়াবেটিসের সাথে দেখা যায়।':'উচ্চ রক্তচাপ না থাকা আপনার স্কোর কম রাখতে সাহায্য করে।',
+  age:(x,u)=>`${x.val} বছর বয়স অনুমান ${u?'সামান্য বাড়ায়':'সামান্য কমায়'}।`,
+  bmi:(x,u)=>`আপনার বিএমআই (${x.val.toFixed(1)}) অনুমান ${u?'কিছুটা বাড়ায়':'কমাতে সাহায্য করে'}।`,
+  bp:(x,u)=>`আপনার রক্তচাপ অনুমান ${u?'বাড়ায়':'কমাতে সাহায্য করে'}।`,
+  pulse:(x,u)=>`আপনার নাড়ির গতি (${x.val}) এর প্রভাব ছোট, ${u?'বাড়ানোর':'কমানোর'} দিকে।`,
+  gender:()=>'লিঙ্গের প্রভাব খুব সামান্য।'}}
+};
+
+let lang='en',unit='mmol',last=null;
+try{lang=localStorage.getItem('gs-lang')||'en'}catch(e){}
+const t=k=>T[lang][k];
+const n=s=>lang==='bn'?String(s).replace(/\d/g,d=>'০১২৩৪৫৬৭৮৯'[d]):String(s);
+const F=[{k:'glucose',c:.9,r:7.4},{k:'hyp',c:1.3,r:.5},{k:'age',c:.03,r:45},{k:'bmi',c:.04,r:25},{k:'dia',c:.01,r:88},{k:'sys',c:.008,r:140},{k:'pulse',c:.015,r:75},{k:'gender',c:.1,r:.5}];
+const IMP=[['glucose',.52],['hyp',.16],['bmi',.06],['dia',.05],['weight',.05],['age',.04],['pulse',.04],['sys',.03],['height',.03],['gender',.03]];
+const MOD=[['Random Forest',94],['XGBoost',92],['Decision Tree',89],['TabNet',89],['SVM',89],['KNN',87],['ANN',87]];
+const bar=(name,w,v,bg)=>`<div class="bar"><span>${name}</span><div class="tr"><div class="fl" style="width:${w}%;background:${bg}"></div></div><span>${v}</span></div>`;
+const segs=[...Array(25)].map(()=>{const i=document.createElement('i');$('segs').append(i);return i});
+const setSeg=k=>segs.forEach((e,j)=>e.classList.toggle('on',j<k));
+function buildStatic(){
+ $('imp').innerHTML=IMP.map(([k,v])=>bar(t('f')[k],v/.52*100,n(v.toFixed(2)),'var(--teal)')).join('');
+ $('acc').innerHTML=MOD.map(([m,v])=>bar(m,v,n(v)+'%','var(--ink)')).join('')}
+function bmi(){const h=num('height')/100,w=num('weight');
+ if(h>0&&w>0){const b=w/(h*h),c=b<18.5?0:b<25?1:b<30?2:3;$('bmi').textContent=t('bmiIs')+n(b.toFixed(1))+' ('+t('bmiC')[c]+')';return b}
+ $('bmi').textContent=t('bmiAuto');return NaN}
+function applyLang(){
+ document.documentElement.lang=lang;document.title=t('title');
+ document.querySelectorAll('[data-i]').forEach(e=>e.textContent=t(e.dataset.i));
+ document.querySelectorAll('[data-h]').forEach(e=>e.innerHTML=t(e.dataset.h));
+ document.querySelectorAll('.lang button').forEach(b=>b.classList.toggle('on',b.dataset.l===lang));
+ document.querySelectorAll('.st button').forEach(b=>b.setAttribute('aria-label',+b.dataset.d<0?t('dec'):t('inc')));
+ buildStatic();bmi();updTheme();
+ if(last)show(last,false);else resetResult();
+ try{localStorage.setItem('gs-lang',lang)}catch(e){}}
+const root=document.documentElement;
+function updTheme(){const l=root.dataset.theme==='dark'?t('themeL'):t('themeD');$('theme').setAttribute('aria-label',l);$('theme').title=l}
+$('theme').onclick=()=>{const d=root.dataset.theme==='dark'?'light':'dark';root.dataset.theme=d;try{localStorage.setItem('gs-theme',d)}catch(e){}updTheme()};
+document.querySelectorAll('.lang button').forEach(b=>b.onclick=()=>{lang=b.dataset.l;applyLang()});
+function resetResult(){
+ $('pct').textContent='--';setSeg(0);$('led').style.background='';$('lcdMsg').textContent=t('ready');
+ $('verdict').innerHTML='<div class="empty">'+t('empty')+'</div>';
+ $('why').style.display='none';$('contrib').innerHTML='<p class="note">'+t('n1')+'</p>'}
+
+document.querySelectorAll('.st button').forEach(b=>b.onclick=()=>{
+ const i=b.closest('.in').querySelector('input'),st=parseFloat(i.dataset.step),mn=parseFloat(i.dataset.min),mx=parseFloat(i.dataset.max);
+ const dec=(String(st).split('.')[1]||'').length;
+ let v=i.value===''?parseFloat(i.dataset.def):parseFloat(i.value)+(+b.dataset.d)*st;
+ v=Math.min(mx,Math.max(mn,v));i.value=v.toFixed(dec).replace(/\.0+$/,'');
+ i.dispatchEvent(new Event('input',{bubbles:true}))});
+document.querySelectorAll('input[type=number]').forEach(i=>{
+ i.addEventListener('keydown',e=>{if(['-','+','e','E'].includes(e.key))e.preventDefault()});
+ i.addEventListener('paste',e=>{const x=(e.clipboardData||window.clipboardData).getData('text');if(/[^0-9.]/.test(x))e.preventDefault()});
+ i.addEventListener('input',()=>{if(i.value!==''&&parseFloat(i.value)<0)i.value=Math.abs(i.value)})});
+['height','weight'].forEach(i=>$(i).addEventListener('input',bmi));
+['sys','dia'].forEach(i=>$(i).addEventListener('input',()=>{if(num('sys')>=140||num('dia')>=90)$('hyp').checked=true}));
+document.querySelectorAll('.units button').forEach(b=>b.onclick=()=>{
+ const old=unit,g=$('glucose');unit=b.dataset.u;
+ document.querySelectorAll('.units button').forEach(x=>x.classList.toggle('on',x===b));
+ const mg=unit==='mg';g.dataset.step=mg?1:.1;g.dataset.def=mg?135:7.5;g.dataset.min=mg?18:1;g.dataset.max=mg?720:40;g.placeholder=mg?'135':'7.5';
+ const v=num('glucose');if(!isNaN(v)&&old!==unit)g.value=mg?Math.round(v*18):(v/18).toFixed(1)});
+$('demo').onclick=()=>{if(unit==='mg')document.querySelector('[data-u=mmol]').click();
+ Object.entries({age:51,height:164,weight:49.5,glucose:10.8,sys:159,dia:92,pulse:79}).forEach(([k,v])=>$(k).value=v);
+ $('gm').checked=true;$('hyp').checked=true;bmi();$('err').textContent=''};
+$('reset').onclick=()=>setTimeout(()=>{last=null;bmi();$('err').textContent='';
+ document.querySelectorAll('input.bad').forEach(i=>i.classList.remove('bad'));resetResult()},0);
+$('form').addEventListener('submit',e=>{
+ e.preventDefault();
+ let g=num('glucose');if(unit==='mg')g/=18;
+ const a=num('age'),h=num('height'),w=num('weight'),s=num('sys'),d=num('dia'),p=num('pulse'),bad=[];
+ if(!(a>=1&&a<=110))bad.push('age');if(!(h>=100&&h<=220))bad.push('height');if(!(w>=20&&w<=250))bad.push('weight');
+ if(!(g>=1&&g<=40))bad.push('glucose');if(!(s>=60&&s<=260))bad.push('sys');if(!(d>=30&&d<=160&&d<s))bad.push('dia');if(!(p>=30&&p<=220))bad.push('pulse');
+ ['age','height','weight','glucose','sys','dia','pulse'].forEach(i=>$(i).classList.toggle('bad',bad.includes(i)));
+ const gen=document.querySelector('input[name=g]:checked');
+ if(bad.length||!gen){$('err').textContent=bad.length?t('e1'):t('e2');return}
+ $('err').textContent='';
+ show({age:a,gender:+gen.value,pulse:p,glucose:g,sys:s,dia:d,bmi:bmi(),hyp:$('hyp').checked?1:0},true)});
+
+function show(v,anim){
+ last=v;
+ const parts=F.map(f=>({...f,val:v[f.k],s:f.c*(v[f.k]-f.r)}));
+ const prob=1/(1+Math.exp(-(parts.reduce((a,x)=>a+x.s,0)+.65)));
+ const i=prob<.35?0:prob<.6?1:2,col=['var(--ok)','var(--warn)','var(--bad)'][i],icn=['ok','alert','warn'][i];
+ $('led').style.background=col;$('lcdMsg').textContent=t('lv')[i];
+ $('verdict').innerHTML=`<div class="vd"><svg class="ic" style="color:${col}" aria-hidden="true"><use href="#i-${icn}"/></svg><div><h3 style="color:${col}">${t('lv')[i]}</h3><div class="st2">${prob>=.5?t('yes'):t('no')}</div><p>${t('msg')[i]}</p></div></div>`;
+ const end=Math.round(prob*100),on=Math.round(prob*25);
+ const paint=k=>{$('pct').textContent=n(Math.round(end*k));setSeg(Math.round(on*k))};
+ if(anim){const t0=performance.now();(function tick(ts){const k=Math.min(1,(ts-t0)/1100);paint(1-Math.pow(1-k,3));if(k<1)requestAnimationFrame(tick)})(t0)}else paint(1);
+ const sorted=[...parts].sort((a,b)=>Math.abs(b.s)-Math.abs(a.s));
+ const txt=x=>{const u=x.s>0,R=t('r');return (x.k==='dia'||x.k==='sys'?R.bp:R[x.k])(x,u)};
+ $('rl').innerHTML=sorted.slice(0,3).map(x=>`<li><i class="dir ${x.s>0?'up':'dn'}"></i><div><b>${t('f')[x.k]}</b><span>${n(txt(x))}</span></div></li>`).join('');
+ $('why').style.display='block';
+ const mx=Math.max(...parts.map(x=>Math.abs(x.s)),.5);
+ $('contrib').innerHTML=sorted.map(x=>{const w=Math.abs(x.s)/mx*50,pos=x.s>0;
+  return `<div class="bar"><span>${t('f')[x.k]}</span><div class="tr"><div class="fl" style="width:${w}%;left:${pos?50:50-w}%;background:${pos?'var(--bad)':'var(--ok)'}"></div></div><span>${n((pos?'+':'')+x.s.toFixed(1))}</span></div>`}).join('');
+ if(anim&&innerWidth<860)document.querySelector('.side').scrollIntoView({behavior:'smooth'});
+}
+applyLang();
+</script>
+</body>
+</html>
